@@ -1,95 +1,54 @@
+"use client";
 import Image from 'next/image'
 import styles from './page.module.css'
+import { useEffect, useState } from 'react';
+import ForecastCard from './components/ForecastCard';
+import InfoAlert from './components/InfoAlert';
+import WeatherCard from './components/WeatherCard';
+import { CurrentWeather } from './components/WeatherCard';
+import { Forecast } from './components/ForecastCard';
+import TabComponent from './components/TabComponent';
+interface WeatherData {
+  current: CurrentWeather,
+  daily: Forecast[]
+}
 
 export default function Home() {
+  const [position, setPosition] = useState({latitude: 19.432608, longitude: -99.133209})
+  const [currentWeather, setCurrentWeather] = useState<WeatherData | null>(null);
+  const [infoMsg, setInfoMsg] = useState<string>('');
+
+  useEffect(() => {
+    (async() => {
+      navigator.geolocation.getCurrentPosition(
+      function(currPosition){
+        setPosition({latitude: currPosition.coords.latitude, longitude: currPosition.coords.longitude})
+        console.log(position);
+      },
+      function(error){
+        if(error.code === 1){ // Code 1 error is set when User denied Geolocation
+          setInfoMsg("We are showing a default location, please use the search to find your location");
+        }
+      })
+      const response = await fetch(`api/weather?lat=${position.latitude}&long=${position.longitude}`);
+      const currentInfo = (await response.json()).info
+      setCurrentWeather(currentInfo);
+      console.log('RESPONSE', currentInfo);
+    })();
+  }, [])
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    <div>
+      {infoMsg && <InfoAlert message={infoMsg}></InfoAlert>}
+      <main className={styles.main}>
+        <WeatherCard weather={currentWeather?.current} ></WeatherCard>
+        <TabComponent children={<section>
+          Forecast
+          {currentWeather?.daily.slice(0,5).map((forecast, i) =>
+            <ForecastCard forecast={forecast} key={i}></ForecastCard>
+          )}
+        </section>}/>
+        
+      </main>
+    </div>
   )
 }
