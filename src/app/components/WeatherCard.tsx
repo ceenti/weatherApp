@@ -5,6 +5,8 @@ import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import { IWeatherBg, mainWeatherBg } from '@/utils/colorSchema';
 
+import { useAppSelector } from '../../redux/store';
+
 export interface CurrentWeather {
   dt:         number;
   sunrise:    number;
@@ -29,10 +31,6 @@ export interface Weather {
   icon:        string;
 }
 
-interface CurrentWeatherProps {
-  weather?: CurrentWeather
-}
-
 const theme = createTheme({
   palette: {
     background: {
@@ -48,11 +46,12 @@ const theme = createTheme({
   },
 });
 
-export default function WeatherCard({weather}: CurrentWeatherProps) {
-  if(!weather) return;
-  console.log(weather);
-  const today = new Date(weather.dt * 1000);
-  const bg:string = mainWeatherBg[weather.weather[0].main as keyof IWeatherBg];
+export default function WeatherCard() {
+  const currentWeather = useAppSelector((state) => state.weatherReducer.current);
+  if(!currentWeather) return;
+
+  const today = new Date(currentWeather.dt * 1000);
+  const bg:string = mainWeatherBg[currentWeather.weather[0].main as keyof IWeatherBg];
 
   return (
       <Card 
@@ -75,14 +74,14 @@ export default function WeatherCard({weather}: CurrentWeatherProps) {
               <Avatar
                 variant="rounded"
                 sx={{ bgcolor: '#ffffff', width: 100, height: 100, boxShadow: '1px 1px 2px 1px rgba(0, 0, 0, 0.2)' }}
-                alt={weather.weather[0].main}
-                src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@4x.png`}
+                alt={currentWeather.weather[0].main}
+                src={`https://openweathermap.org/img/wn/${currentWeather?.weather[0].icon}@4x.png`}
               >
-                {weather.weather[0].main}
+                {currentWeather?.weather[0].main}
               </Avatar>
               <Stack direction="column" spacing={3}>
                 <Typography variant="h5" component="div">{today.toDateString()}</Typography>
-                <Typography gutterBottom variant="h2" component="div">{weather.weather[0].main}: {weather && Math.round(weather.temp)}°C</Typography>
+                <Typography gutterBottom variant="h2" component="div">{currentWeather.weather[0].main}: {Math.round(currentWeather?.temp)}°C</Typography>
               </Stack>
             </Stack>
           </CardContent>

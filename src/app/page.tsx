@@ -8,6 +8,11 @@ import WeatherCard from './components/WeatherCard';
 import { CurrentWeather } from './components/WeatherCard';
 import { Forecast } from './components/ForecastCard';
 import TabComponent from './components/TabComponent';
+import { useDispatch } from 'react-redux';
+
+
+import { setWeather } from '@/redux/features/weather-slice';
+import { AppDispatch, useAppSelector } from '@/redux/store';
 interface WeatherData {
   current: CurrentWeather,
   daily: Forecast[]
@@ -17,6 +22,9 @@ export default function Home() {
   const [position, setPosition] = useState({latitude: 19.432608, longitude: -99.133209})
   const [currentWeather, setCurrentWeather] = useState<WeatherData | null>(null);
   const [infoMsg, setInfoMsg] = useState<string>('');
+  const forecastData = useAppSelector(state => state.weatherReducer.daily);
+
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     (async() => {
@@ -32,6 +40,7 @@ export default function Home() {
       })
       const response = await fetch(`api/weather?lat=${position.latitude}&long=${position.longitude}`);
       const currentInfo = (await response.json()).info
+      dispatch(setWeather(currentInfo));
       setCurrentWeather(currentInfo);
       console.log('RESPONSE', currentInfo);
     })();
@@ -40,10 +49,9 @@ export default function Home() {
     <div>
       {infoMsg && <InfoAlert message={infoMsg}></InfoAlert>}
       <main className={styles.main}>
-        <WeatherCard weather={currentWeather?.current} ></WeatherCard>
+        <WeatherCard />
         <TabComponent children={<section>
-          Forecast
-          {currentWeather?.daily.slice(0,5).map((forecast, i) =>
+          {forecastData.slice(0,5).map((forecast, i) =>
             <ForecastCard forecast={forecast} key={i}></ForecastCard>
           )}
         </section>}/>
