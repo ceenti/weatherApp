@@ -23,10 +23,11 @@ function CustomTabPanel(props: TabPanelProps) {
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
+      style={{ position:'relative', maxWidth:'1200px', margin:'0 auto' }}
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box>
           {children}
         </Box>
       )}
@@ -48,7 +49,7 @@ export default function TabComponent(props: TabContentProps) {
   };
   
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', maxWidth: '1200px' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
       <Tabs
         value={value}
@@ -58,12 +59,12 @@ export default function TabComponent(props: TabContentProps) {
         aria-label="secondary tabs example"
       >
           <Tab label="Forecast" {...a11yProps(0)} />
-          <Tab label="Historic"  {...a11yProps(1)} />
+          <Tab label="Historical"  {...a11yProps(1)} disabled/>
       </Tabs>
     </Box>
     <CustomTabPanel value={value} index={0}>
-    {props.children}
-  </CustomTabPanel>
+      {props.children}
+    </CustomTabPanel>
   </Box>
   );
 }

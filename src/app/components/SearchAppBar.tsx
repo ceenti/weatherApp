@@ -1,52 +1,24 @@
+"use client";
 import * as React from 'react';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import { styled, alpha, AppBar, Box, Toolbar, IconButton, Typography, InputBase } from '@material-ui/core';
+import { styled, Box, Typography } from '@material-ui/core';
+import { fetcher } from '@/utils/fetch';
+import useSWR from 'swr';
+import { useState } from 'react';
+import { Autocomplete, TextField } from '@mui/material';
+import { Location as SelectedLocation, setLocation } from '@/redux/features/location-slice';
+import { AppDispatch } from '@/redux/store';
+import { useDispatch } from 'react-redux';
 
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(1),
-    width: 'auto',
-  },
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, .5),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifySelf: 'left',
-  color: 'gray'
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  width: '100%',
-  border: '1px solid #B1B2BE',
-  borderRadius: '0.1875rem',
-  '& .MuiInputBase-input': {
-    borderColor: "#C3C4CD",
-    padding: theme.spacing(1, 1, 1, 4),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    [theme.breakpoints.up('sm')]: {
-      width: '12ch',
-      '&:focus': {
-        width: '20ch',
-      },
-    },
-  },
-}));
+type Location = {
+  name: string;
+  sys: {
+    country: string;
+  };
+  coord: {
+    lat: number,
+    lon: number
+  }
+}
 
 const StyledAppBar = styled('header')(({ theme }) => ({
   background: "#EDEEF6"
@@ -62,6 +34,35 @@ const StyledToolBar = styled('div')(({theme}) => ({
 }))
 
 export default function SearchAppBar() {
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const { data, error, isLoading } = useSWR(`api/find?q=${searchQuery}`, fetcher)
+  const dispatch = useDispatch<AppDispatch>();
+  let optionData = [];
+
+  const searchPlace = (value: React.SetStateAction<string>) => {setSearchQuery(value)}
+  const setSelectedLocation = (value:any) => {
+
+    if(!value?.label) return;
+    const loc = {
+      name: value.label,
+      latitude: parseFloat(value.value.split(",")[0]),
+      longitude: parseFloat(value.value.split(",")[1]),
+    } as SelectedLocation;
+    dispatch(setLocation({selectedLocation: loc}));
+  }
+
+  if(data?.info?.list) {
+    optionData = []
+    optionData = data?.info?.list?.map(
+      (item: Location) => (
+        {
+          label: `${item.name}, ${item.sys.country}`,
+          value: `${item.coord.lat},${item.coord.lon}`
+        }
+      )
+    )
+  }
+  
   return (
     <Box p={0} m={0} sx={{ flexGrow: 1 }}>
       <StyledAppBar>
@@ -73,15 +74,15 @@ export default function SearchAppBar() {
           >
             WEATHER
           </Typography>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
+          <Autocomplete
+            id="combo-box-demo"
+            options={optionData || []}
+            sx={{ width: 300 }}
+            onInputChange={(_, value) => searchPlace(value as string)}
+            renderInput={(params) => <TextField {...params} label="Search"/> }
+            onChange={(_, value) => setSelectedLocation(value)}
+            size='small'
+          />
         </StyledToolBar>
       </StyledAppBar>
     </Box>

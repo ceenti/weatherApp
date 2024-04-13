@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import DashboardLayout from './components/DashboardLayout';
+import { ReduxProvider } from '@/redux/provider';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,7 +22,9 @@ export default function RootLayout({
       <body className={inter.className}>
       <AppRouterCacheProvider options={{ enableCssLayer: true }}>
         <DashboardLayout>
-        {children}
+          <ReduxProvider>
+            {children}
+          </ReduxProvider>
         </DashboardLayout>
       </AppRouterCacheProvider>
       </body>
