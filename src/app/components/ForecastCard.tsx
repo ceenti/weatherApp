@@ -1,5 +1,4 @@
 import * as React from 'react';
-import FilterDramaOutlinedIcon from '@mui/icons-material/FilterDramaOutlined';
 import {Box} from '@mui/material';
 
 import { Weather } from './WeatherCard';
@@ -59,16 +58,18 @@ export default function ForecastCard({forecast}:ForcastCardProps) {
       pb={2}
       mt={2}
       mb={2}
+      paddingInline={1}
       borderRadius={'0.5rem'}
-      sx={{background: `linear-gradient(${bg})`}}
+      sx={{display: 'flex', justifyContent:'space-between', alignItems:'flex-end', background: `linear-gradient(${bg})`}}
       maxWidth={1200}
       width={'100%'}
+      boxShadow={'rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;'}
     >
       <Box>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2} pl={1}>
           <Avatar
             variant="rounded"
-            sx={{ bgcolor: '#ffffff', width: 70, height: 70, boxShadow: '1px 1px 2px 1px rgba(0, 0, 0, 0.2)' }}
+            sx={{ bgcolor: '#ffffff', width: 70, height: 70 }}
             alt={forecast.weather[0].main}
             src={`https://openweathermap.org/img/wn/${forecast.weather[0].icon}@4x.png`}
           >
