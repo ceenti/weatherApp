@@ -1,5 +1,6 @@
 "use client"
 import SearchAppBar from "./SearchAppBar"
+import { ReduxProvider } from '@/redux/provider';
 
 export default function DashboardLayout({
   children,
@@ -8,7 +9,9 @@ export default function DashboardLayout({
 }) {
   return (
     <section>
-      <SearchAppBar/>
+      <ReduxProvider>
+        <SearchAppBar/>
+      </ReduxProvider>
       <nav></nav>
       {children}
     </section>

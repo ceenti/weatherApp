@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import weatherReducer from "./features/weather-slice";
+import locationReducer from "./features/location-slice"
 import { TypedUseSelectorHook, useSelector } from "react-redux";
 
 export const store = configureStore({
   reducer: {
-    weatherReducer
+    weatherReducer,
+    locationReducer
   }
 });
 

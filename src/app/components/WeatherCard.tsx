@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { Card, CardActionArea, CardContent, Typography } from '@mui/material';
+import { Card, CardActionArea, CardContent, Skeleton, Typography } from '@mui/material';
 import { createTheme } from '@mui/system';
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import { IWeatherBg, mainWeatherBg } from '@/utils/colorSchema';
+import LoadingSkeleton from './LoadingSkeleton'
 
 import { useAppSelector } from '../../redux/store';
 
@@ -48,7 +49,7 @@ const theme = createTheme({
 
 export default function WeatherCard() {
   const currentWeather = useAppSelector((state) => state.weatherReducer.current);
-  if(!currentWeather) return;
+  if(!currentWeather) return <LoadingSkeleton/>;
 
   const today = new Date(currentWeather.dt * 1000);
   const bg:string = mainWeatherBg[currentWeather.weather[0].main as keyof IWeatherBg];
@@ -65,12 +66,13 @@ export default function WeatherCard() {
         margin: 2,
         background: bg,
         backgroundSize: 'cover',
-        backgroundRepeat: 'none'
+        backgroundRepeat: 'none',
+        maxWidth: 1200
       }}
       >
-        <CardActionArea sx={{ p: 2 }}>
+        <CardActionArea sx={{ p: 2 }} onClick={() => {}}>
           <CardContent sx={{ p: 2 }}>  
-            <Stack direction="row" spacing={3}>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
               <Avatar
                 variant="rounded"
                 sx={{ bgcolor: '#ffffff', width: 100, height: 100, boxShadow: '1px 1px 2px 1px rgba(0, 0, 0, 0.2)' }}

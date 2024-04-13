@@ -61,9 +61,11 @@ export default function ForecastCard({forecast}:ForcastCardProps) {
       mb={2}
       borderRadius={'0.5rem'}
       sx={{background: `linear-gradient(${bg})`}}
+      maxWidth={1200}
+      width={'100%'}
     >
       <Box>
-        <Stack direction="row" spacing={2} pl={1}>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={2} pl={1}>
           <Avatar
             variant="rounded"
             sx={{ bgcolor: '#ffffff', width: 70, height: 70, boxShadow: '1px 1px 2px 1px rgba(0, 0, 0, 0.2)' }}
