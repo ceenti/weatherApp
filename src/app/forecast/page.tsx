@@ -40,13 +40,13 @@ const Forecast = () => {
         Click to find your location
       </Button>
     </Stack>
-    <TabComponent children={
+    <TabComponent>
       <Box sx={{ alignItems:'start', justifyContent:'space-evenly' }}>
         {forecastData.slice(0,5).map((forecast, i) =>
           <ForecastCard forecast={forecast} key={i}></ForecastCard>
         )}
-      </Box>}
-    />
+      </Box>
+    </TabComponent>
     </main>
   </div>
   )
