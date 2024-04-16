@@ -21,11 +21,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
       <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-        <DashboardLayout>
-          <ReduxProvider>
+        <ReduxProvider>
+          <DashboardLayout>
             {children}
-          </ReduxProvider>
-        </DashboardLayout>
+          </DashboardLayout>
+        </ReduxProvider>
       </AppRouterCacheProvider>
       </body>
     </html>

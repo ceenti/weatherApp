@@ -18,7 +18,6 @@ type Coord = {
   lon: number;
 }
 
-
 type InitialState = {
   current: CurrentWeather | null,
   daily: Forecast[],

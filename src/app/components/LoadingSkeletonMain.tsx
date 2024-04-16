@@ -5,11 +5,6 @@ import Grid from '@mui/material/Grid';
 
 const variants = [
   'h1',
-  'h2',
-  'h2',
-  'h2',
-  'h2',
-  'h2',
 ] as readonly TypographyProps['variant'][];
 
 function TypographyDemo(props: { loading?: boolean }) {
@@ -26,12 +21,11 @@ function TypographyDemo(props: { loading?: boolean }) {
   );
 }
 
-export default function LoadingSkeleton() {
+export default function LoadingSkeletonMain() {
   return (
-    <Grid container spacing={10} p={10}>
+    <Grid container spacing={12} p={12}>
       <Grid item md>
-      <Skeleton variant="rounded" width={'100%'} height={220} />
-        <TypographyDemo loading />
+      <Skeleton variant="rounded" width={'100%'} height={420} />
       </Grid>
     </Grid>
   );

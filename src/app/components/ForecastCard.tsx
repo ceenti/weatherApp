@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {Box} from '@mui/material';
 
-// import { Weather } from './WeatherCard';
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import { IWeatherBg, weatherBg } from '@/utils/colorSchema';
