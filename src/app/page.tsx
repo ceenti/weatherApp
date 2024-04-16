@@ -10,10 +10,6 @@ import { Button, Stack } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/redux/store';
 import { setGeolocation } from '@/redux/features/geolocation-slice';
-interface WeatherData {
-  current: CurrentWeather,
-  daily: Forecast[]
-}
 
 export default function Home() {
   const [infoMsg, setInfoMsg] = useState<string>('');
@@ -44,7 +40,7 @@ export default function Home() {
             Click to find your location
           </Button>
         </Stack>
-        <WeatherCard />
+        <WeatherCard></WeatherCard>
       </main>
     </div>
   )
