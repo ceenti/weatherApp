@@ -79,7 +79,7 @@ export default function SearchAppBar() {
             options={optionData || []}
             sx={{ width: 300 }}
             onInputChange={(_, value) => searchPlace(value as string)}
-            renderInput={(params) => <TextField {...params} label="Search"/> }
+            renderInput={(params) => <TextField {...params} label="Search for city or place..."/> }
             onChange={(_, value) => setSelectedLocation(value)}
             size='small'
           />

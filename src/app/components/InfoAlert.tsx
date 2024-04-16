@@ -9,7 +9,7 @@ interface InfoAlerProps {
 
 export default function InfoAlert({message, severity}: InfoAlerProps) {
   return (
-    <Alert icon={<CheckIcon fontSize="inherit" />} severity={severity}>
+    <Alert icon={<CheckIcon fontSize="inherit" />} severity='success'>
      {message}
     </Alert>
   );

@@ -29,20 +29,24 @@ export default function Home() {
   const dispatch = useDispatch<AppDispatch>();
   
   const { data, error, isLoading } = useSWR(`api/weather?lat=${position.latitude}&long=${position.longitude}`, fetcher)
-  if(data) {
-    dispatch(setWeather(data.info));
-  }
-  // if(isLoading) return <LoadingSkeleton/>;
-
-
+  console.log("DATA Current", data);
+  
   useEffect(() => {
     if(locationData.selectedLocation?.name) {
       setPosition({
         latitude: locationData.selectedLocation.latitude,
         longitude: locationData.selectedLocation.longitude,
       });
+      setInfoMsg("");
     }
   }, [locationData])
+  
+  useEffect(() => {
+    if(data && data.info.cod === "200") {
+      dispatch(setWeather({current: data.info.list[0], daily: data.info.list.slice(1,6), city: data.info.city}));
+      setInfoMsg("");
+    }
+  }, [data]);
 
   const getLocation = useCallback(() => {
       navigator.geolocation.getCurrentPosition(
@@ -64,18 +68,15 @@ export default function Home() {
       {error && <InfoAlert message={"Please try again later"} severity={"warning"}></InfoAlert>}
       {infoMsg && <InfoAlert message={infoMsg} severity={"error"}></InfoAlert>}
       <main className={styles.main}>
-      <Stack direction="row" spacing={2} sx={{ alignSelf:'flex-end' }}>
+      <Stack direction="row" spacing={4} sx={{ justifyContent: 'space-between', width: '100%', maxWidth: '1200px' }}>
+        <Button  variant='contained' color="secondary" onClick={()=>{}} sx={{ justifySelf: 'right' }}>
+          FORECAST
+        </Button>
         <Button  variant="outlined" color="secondary" onClick={getLocation} sx={{ justifySelf: 'right' }}>
           Click to find your location
         </Button>
       </Stack>
         <WeatherCard />
-        <TabComponent children={<Box sx={{ alignItems:'start', justifyContent:'space-evenly' }}>
-          {forecastData.slice(0,5).map((forecast, i) =>
-            <ForecastCard forecast={forecast} key={i}></ForecastCard>
-          )}
-        </Box>}/>
-        
       </main>
     </div>)
     )
