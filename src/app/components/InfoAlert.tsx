@@ -4,12 +4,11 @@ import CheckIcon from '@mui/icons-material/Check';
 
 interface InfoAlerProps {
   message: string;
-  severity: string;
 }
 
-export default function InfoAlert({message, severity}: InfoAlerProps) {
+export default function InfoAlert({message}: InfoAlerProps) {
   return (
-    <Alert icon={<CheckIcon fontSize="inherit" />} severity={severity}>
+    <Alert icon={<CheckIcon fontSize="inherit" />} severity='warning'>
      {message}
     </Alert>
   );

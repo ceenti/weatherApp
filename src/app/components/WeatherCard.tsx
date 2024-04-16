@@ -1,29 +1,11 @@
 import * as React from 'react';
-import { Card, CardActionArea, CardContent, Skeleton, Typography } from '@mui/material';
-import { createTheme } from '@mui/system';
+import { Card, CardActionArea, CardContent, Typography } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import { IWeatherBg, mainWeatherBg } from '@/utils/colorSchema';
-import LoadingSkeleton from './LoadingSkeleton'
+import LoadingSkeletonMain from './LoadingSkeletonMain';
 
 import { useAppSelector } from '../../redux/store';
-
-export interface CurrentWeather {
-  dt:         number;
-  sunrise:    number;
-  sunset:     number;
-  temp:       number;
-  feels_like: number;
-  pressure:   number;
-  humidity:   number;
-  dew_point:  number;
-  uvi:        number;
-  clouds:     number;
-  visibility: number;
-  wind_speed: number;
-  wind_deg:   number;
-  weather:    Weather[];
-}
 
 export interface Weather {
   id:          number;
@@ -32,62 +14,86 @@ export interface Weather {
   icon:        string;
 }
 
-const theme = createTheme({
-  palette: {
-    background: {
-      paper: '#fff',
-    },
-    text: {
-      primary: '#173A5E',
-      secondary: '#46505A',
-    },
-    action: {
-      active: '#001E3C',
-    },
-  },
-});
+export interface CurrentWeather {
+  dt:         number;
+  main:       Main;
+  weather:    Weather[];
+  visibility: number;
+  pop:        number;
+  dt_txt:     string;
+}
+export interface Main {
+  temp:       number;
+  feels_like: number;
+  temp_min:   number;
+  temp_max:   number;
+  pressure:   number;
+  sea_level:  number;
+  grnd_level: number;
+  humidity:   number;
+  temp_kf:    number;
+}
 
 export default function WeatherCard() {
   const currentWeather = useAppSelector((state) => state.weatherReducer.current);
-  if(!currentWeather) return <LoadingSkeleton/>;
+  const city = useAppSelector((state)=> state.weatherReducer.city)
+  if(!currentWeather || !city) return <LoadingSkeletonMain/>;
 
   const today = new Date(currentWeather.dt * 1000);
   const bg:string = mainWeatherBg[currentWeather.weather[0].main as keyof IWeatherBg];
 
   return (
-      <Card 
-      sx={{
-        width: '100%',
-        p: 2,
-        borderRadius: 2,
-        minWidth: 300,
-        boxShadow: 0,
-        border: '1 solid #EEEEF0',
-        margin: 2,
-        background: bg,
-        backgroundSize: 'cover',
-        backgroundRepeat: 'none',
-        maxWidth: 1200
-      }}
-      >
-        <CardActionArea sx={{ p: 2 }} onClick={() => {}}>
-          <CardContent sx={{ p: 2 }}>  
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
-              <Avatar
+    <Card 
+    sx={{
+      width: '100%',
+      p: 2,
+      borderRadius: 2,
+      minWidth: 300,
+      boxShadow: 0,
+      border: '1 solid #EEEEF0',
+      margin: 2,
+      background: bg,
+      backgroundSize: 'cover',
+      backgroundRepeat: 'none',
+      maxWidth: 1200,
+    }}
+    >
+      <CardActionArea sx={{ p: 2 }} onClick={() => {}}>
+        <CardContent sx={{ p: 2 }}>
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={3} alignItems={'center'}>
+            <Avatar
                 variant="rounded"
                 sx={{ bgcolor: '#ffffff', width: 100, height: 100, boxShadow: '1px 1px 2px 1px rgba(0, 0, 0, 0.2)' }}
                 alt={currentWeather.weather[0].main}
                 src={`https://openweathermap.org/img/wn/${currentWeather?.weather[0].icon}@4x.png`}
               >
                 {currentWeather?.weather[0].main}
-              </Avatar>
+            </Avatar>
+            <div>
               <Stack direction="column" spacing={3}>
-                <Typography variant="h5" component="div">{today.toDateString()}</Typography>
-                <Typography gutterBottom variant="h2" component="div">{currentWeather.weather[0].main}: {Math.round(currentWeather?.temp)}°C</Typography>
+              <Typography variant="h5" component="div">{today.toDateString()}</Typography>
+                <Typography gutterBottom variant="h2" component="div">{currentWeather && currentWeather.weather[0].main} { currentWeather && currentWeather?.main.temp && Math.round(currentWeather?.main.temp)}°C</Typography>
               </Stack>
-            </Stack>
-          </CardContent>
-        </CardActionArea>
-      </Card>
+              <Stack direction="column">
+              <Typography variant="h5" component="div">Region:</Typography>
+                <Typography gutterBottom variant="h3" component="div">{city && city.name && city['name']}, {city && city.country && city['country']}</Typography>
+              </Stack>
+              <Typography variant="h5" component="div">Weather conditions</Typography>
+              <Stack direction={{ xs:"column", sm: "row" }} spacing={3}>
+                <p>
+                  <Typography gutterBottom variant="h5" component="div">Feels like {Math.round(currentWeather.main.feels_like)}°C</Typography>
+                </p>
+                <p>
+                  <Typography gutterBottom variant="h5" component="div">Max: {Math.round(currentWeather.main.temp_max)}°C - Min: {Math.round(currentWeather.main.temp_min)}°C</Typography>
+                </p>
+                <p>
+                  <Typography gutterBottom variant="h5" component="div">Humidity {currentWeather.main.humidity}%</Typography>
+                </p>
+              </Stack>
+            </div>
+          </Stack>
+        </CardContent>
+      </CardActionArea>
+    </Card>
   )
 }

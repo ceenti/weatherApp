@@ -1,56 +1,58 @@
 import * as React from 'react';
 import {Box} from '@mui/material';
 
-import { Weather } from './WeatherCard';
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import { IWeatherBg, weatherBg } from '@/utils/colorSchema';
-
-export interface Forecast {
-  dt:         number;
-  sunrise:    number;
-  sunset:     number;
-  moonrise:   number;
-  moonset:    number;
-  moon_phase: number;
-  summary:    string;
-  temp:       Temp;
-  feels_like: FeelsLike;
-  pressure:   number;
-  humidity:   number;
-  dew_point:  number;
-  wind_speed: number;
-  wind_deg:   number;
-  wind_gust:  number;
-  weather:    Weather[];
-  clouds:     number;
-  pop:        number;
-  uvi:        number;
-}
-
-export interface FeelsLike {
-  day:   number;
-  night: number;
-  eve:   number;
-  morn:  number;
-}
-
-export interface Temp {
-  day:   number;
-  min:   number;
-  max:   number;
-  night: number;
-  eve:   number;
-  morn:  number;
-}
 
 interface ForcastCardProps {
   forecast: Forecast
 }
 
+export interface Forecast {
+  dt:         number;
+  main:       Main;
+  weather:    Weather[];
+  wind:       Wind;
+  visibility: number;
+  pop:        number;
+  sys:        Sys;
+  dt_txt:     string;
+}
+
+export interface Main {
+  temp:       number;
+  feels_like: number;
+  temp_min:   number;
+  temp_max:   number;
+  pressure:   number;
+  sea_level:  number;
+  grnd_level: number;
+  humidity:   number;
+  temp_kf:    number;
+}
+
+export interface Sys {
+  pod: string;
+}
+
+interface Weather {
+  id:          number;
+  main:        string;
+  description: string;
+  icon:        string;
+}
+
+export interface Wind {
+  speed: number;
+  deg:   number;
+  gust:  number;
+}
+
+
 export default function ForecastCard({forecast}:ForcastCardProps) {
   const forecastDate = new Date(forecast.dt * 1000);
-  const tempMax = Math.round(forecast.temp.max);
+  const tempMax = Math.round(forecast.main.temp_max);
   const bg = weatherBg[forecast.weather[0].main as keyof IWeatherBg];
   return (
     <Box 
@@ -73,14 +75,14 @@ export default function ForecastCard({forecast}:ForcastCardProps) {
             alt={forecast.weather[0].main}
             src={`https://openweathermap.org/img/wn/${forecast.weather[0].icon}@4x.png`}
           >
-            {forecast.weather[0].main}
+            {forecast && forecast.weather[0].main}
           </Avatar>
           <Stack direction="column" spacing={1} pl={1}>
-            <strong>{forecast.weather[0].main}</strong>
-            <small>Forecast for: {forecastDate.toDateString()}</small>
-            <p>Max: {tempMax}°C - Min: {forecast.temp.min}°C</p>
+            <strong>{forecast ? forecast.weather[0].main : 'No forecast info available'}</strong>
+            {forecastDate && <small>Forecast for: {forecastDate && forecastDate.toDateString()}</small>}
+            {forecast && <p>Max: {tempMax}°C - Min: {forecast && forecast.main.temp_min}°C</p>}
           </Stack>
-          <p><strong>Summary: </strong><br/>{forecast.summary}</p>
+          {forecast && <p><strong>Summary: </strong><br/>{forecast.weather[0].description}</p>}
         </Stack>
       </Box>
     </Box>
