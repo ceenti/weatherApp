@@ -1,13 +1,12 @@
 "use client";
 import styles from './page.module.css'
-import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from "next/navigation";
 import InfoAlert from './components/InfoAlert';
 import WeatherCard from './components/WeatherCard';
 import { CurrentWeather } from './components/WeatherCard';
 import { Forecast } from './components/ForecastCard';
 import { Button, Stack } from '@mui/material';
-import { Position } from './components/DashboardLayout';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/redux/store';
 import { setGeolocation } from '@/redux/features/geolocation-slice';
